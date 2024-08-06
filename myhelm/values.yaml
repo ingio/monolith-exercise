@@ -1,0 +1,12 @@
+deployment:
+  monolithApp:
+    image:
+      repository: ingihome/monolith-exersice-api
+      tag: latest
+  replicas: 20
+kubernetesClusterDomain: cluster.local
+svc:
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer

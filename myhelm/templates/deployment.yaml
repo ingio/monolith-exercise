@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "myhelm.fullname" . }}-deployment
+  labels:
+    app: monolith-app
+  {{- include "myhelm.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app: monolith-app
+    {{- include "myhelm.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: monolith-app
+      {{- include "myhelm.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - env:
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.deployment.monolithApp.image.repository }}:{{ .Values.deployment.monolithApp.image.tag
+          | default .Chart.AppVersion }}
+        name: monolith-app
+        resources: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "myhelm.fullname" . }}-svc
+  labels:
+    app: monolith-app
+  {{- include "myhelm.labels" . | nindent 4 }}
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+spec:
+  type: {{ .Values.svc.type }}
+  selector:
+    app: monolith-app
+  {{- include "myhelm.selectorLabels" . | nindent 4 }}
+  ports:
+	{{- .Values.svc.ports | toYaml | nindent 2 }}
