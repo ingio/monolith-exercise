@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
       - name: monolith-app
-        image: ingihome/monolith-exersice-api:latest
+        image: ioeusacr.azurecr.io/monolith # ingihome/monolith-exersice-api:latest
 ---
 apiVersion: v1
 kind: Service
